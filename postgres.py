@@ -65,6 +65,33 @@ def insertRecord(num,name,dept):
         if conn.closed==0: conn.close()
 
 
+def deleteRecord(num):
+    try:
+        conn = psycopg2.connect(database=db, user=user, password=pwd, host=host, port=port)
+        cur=conn.cursor()
+        cur.execute('''delete from employee where emp_num=%s''',(num,))
+        conn.commit()
+        print('%s row(s) got deleted.' % cur.rowcount)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if cur.closed == 0: cur.close()
+        if conn.closed == 0: conn.close()
+
+
+def updateRecord(num, dep):
+    try:
+        conn = psycopg2.connect(database=db, user=user, password=pwd, host=host, port=port)
+        cur = conn.cursor()
+        cur.execute('''update employee set department = %s where emp_num = %s''',(dep,num))
+        conn.commit()
+        print('%s record(s) updated.' % cur.rowcount)
+    except (Exception,psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if cur.closed == 0: cur.close()
+        if conn.closed==0: conn.close()
+
 if __name__ == '__main__':
     # db = os.environ.get('PGDBNAME')
     # user = os.environ.get('PGUSER')
@@ -74,7 +101,9 @@ if __name__ == '__main__':
     # connectDB(db, user, pwd, host, port)
 
     # create table function test
-    # createTable()
+    createTable()
 
     #insert record test
     insertRecord(1234,'Roza', 'Civil')
+    updateRecord(1234,'IT')
+    deleteRecord(1234)
