@@ -4,14 +4,19 @@ import util
 
 util.set_environ_vars()
 
-db = os.environ.get('PGDBNAME')
-user = os.environ.get('PGUSER')
-pwd = os.environ.get('PGPASSWORD')
-host = os.environ.get('PGHOST')
+def connectDB(dbname, username, password, address, portnum):
+    try:
+        conn = psycopg2.connect(database=dbname, user=username, password=password, host=address, port=portnum)
+        print('Connection successful')
+    except (Exception,psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        conn.close()
 
-
-def get_conn(db, user, pwd, host):
-    return psycopg2.connect('dbname={} user={} password={} host={}'.format(db, user, pwd, host))
-
-get_conn(db, user, pwd, host)
-print('connection successful...')
+if __name__ == '__main__':
+    db = os.environ.get('PGDBNAME')
+    user = os.environ.get('PGUSER')
+    pwd = os.environ.get('PGPASSWORD')
+    host = os.environ.get('PGHOST')
+    port = os.environ.get('PGPORT')
+    connectDB(db, user, pwd, host, port)
