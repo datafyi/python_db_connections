@@ -4,6 +4,13 @@ import util
 
 util.set_environ_vars()
 
+global db, user, pwd, host, port
+db = os.environ.get('PGDBNAME')
+user = os.environ.get('PGUSER')
+pwd = os.environ.get('PGPASSWORD')
+host = os.environ.get('PGHOST')
+port = os.environ.get('PGPORT')
+
 
 def connectDB(dbname, username, password, address, portnum):
     conn = None
@@ -18,11 +25,6 @@ def connectDB(dbname, username, password, address, portnum):
 
 
 def createTable():
-    db = os.environ.get('PGDBNAME')
-    user = os.environ.get('PGUSER')
-    pwd = os.environ.get('PGPASSWORD')
-    host = os.environ.get('PGHOST')
-    port = os.environ.get('PGPORT')
     try:
         # Establish connection
         conn = psycopg2.connect(database=db, user=user, password=pwd, host=host, port=port)
@@ -47,6 +49,22 @@ def createTable():
             conn.close()
 
 
+def insertRecord(num,name,dept):
+    try:
+        conn = psycopg2.connect(database=db, user=user, password=pwd, host=host, port=port)
+        cur=conn.cursor()
+
+        cur.execute('''insert into employee(emp_num,emp_name,department) values (%s, %s, %s)''',(num,name,dept))
+        conn.commit()
+        print('Record successfully inserted')
+    except (Exception,psycopg2.DatabaseError) as error:
+        print(error)
+
+    finally:
+        if cur.closed==0: cur.close()
+        if conn.closed==0: conn.close()
+
+
 if __name__ == '__main__':
     # db = os.environ.get('PGDBNAME')
     # user = os.environ.get('PGUSER')
@@ -56,4 +74,7 @@ if __name__ == '__main__':
     # connectDB(db, user, pwd, host, port)
 
     # create table function test
-    createTable()
+    # createTable()
+
+    #insert record test
+    insertRecord(1234,'Roza', 'Civil')
